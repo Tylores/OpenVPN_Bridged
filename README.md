@@ -34,6 +34,7 @@ sudo nano /etc/openvpn/server.conf
 ```
 disable "dev tun" by prefacing with a ";" and enable "dev tap0" by removing the ";".
 
+```
 # "dev tun" will create a routed IP tunnel,
 # "dev tap" will create an ethernet tunnel.
 # Use "dev tap0" if you are ethernet bridging
@@ -48,7 +49,7 @@ disable "dev tun" by prefacing with a ";" and enable "dev tap0" by removing the 
 # On most systems, the VPN will not function
 # unless you partially or fully disable
 # the firewall for the TUN/TAP interface.
-**dev tap**
-**;dev tun**
-
+dev tap
+;dev tun
+```
 
