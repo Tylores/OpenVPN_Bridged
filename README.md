@@ -6,6 +6,8 @@ Follow steps 1-6 in the following link:
 
 https://www.digitalocean.com/community/tutorials/how-to-set-up-an-openvpn-server-on-ubuntu-16-04
 
+This specific tutorial shows how to setup tls-authentication, but we will ignore those settings within the server config for now to reduce complexity.
+
 ## Bridged : Server Config
 
 To create a bridged vpn connection, you must create a virtual bridge within the server to pass packets between interfaces.
@@ -68,6 +70,9 @@ Disable server by prefacing with ";".
 
 Enable server-bridge by removing ";" and set subnet.
 
+**Keep the subnet ip and netmask as they will be used later**
+
+
 ```
 # Configure server mode for ethernet bridging.
 # You must first use your OS's bridging capability
@@ -95,6 +100,71 @@ For our purposes we will configure all clients to redirect all traffic through t
 # in order for this to work properly).
 push "redirect-gateway def1 bypass-dhcp"
 ```
+
+Finally we will enable dublicate certificate/key by enabling duplicate-cn by removing ";".
+
+```
+# Uncomment this directive if multiple clients
+# might connect with the same certificate/key
+# files or common names.  This is recommended
+# only for testing purposes.  For production use,
+# each client should have its own certificate/key
+# pair.
+#
+# IF YOU HAVE NOT GENERATED INDIVIDUAL
+# CERTIFICATE/KEY PAIRS FOR EACH CLIENT,
+# EACH HAVING ITS OWN UNIQUE "COMMON NAME",
+# UNCOMMENT THIS LINE OUT.
+duplicate-cn
+```
+
+## Setup Bridge Start/Stop
+
+``` base
+sudo cp /usr/share/doc/openvpn/examples/sample-scripts/bridge-start /bin
+sudo chmod 755 /bin/bridge-start
+sudo nano /bin/bridge-start
+```
+
+We can ignot the physical ethernet interface to be bridged since we only want clients to communicate with the server by commenting out "eth" with a "#". Next use the subnet IP and Netmask from the server config and set the "eth_" variables.
+
+
+``` bash
+# Define physical ethernet interface to be bridged
+# with TAP interface(s) above.
+# eth="eth0"
+eth_ip="10.8.0.4"
+eth_netmask="255.255.255.0"
+eth_broadcast="10.8.0.255"
+```
+
+Then disable the "brctl addif" because we don't need the clients to speak to anyone but the server
+ ``` bash
+brctl addbr $br
+# brctl addif $br $eth
+```
+
+Now copy bridge-start to /etc/init.d so it will automatically be ran at startup.
+
+``` base
+sudo cp /bin/bridge-start /etc/inid.d
+```
+
+The bridge-stop script just needs to be copied to the bin folder.
+
+
+``` base
+sudo cp /usr/share/doc/openvpn/examples/sample-scripts/bridge-stop /bin
+sudo chmod 755 /bin/bridge-stopifco
+```
+
+## Server Network Config
+
+Now continue the previous tutorial from step 8-10.
+ **NOTE: Ignore setup 10 below the following line:**  
+ > Mirror the cipher and auth settings that we set in the /etc/openvpn/server.conf file: 
+ 
+
 
 
 
