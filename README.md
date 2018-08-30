@@ -158,10 +158,12 @@ sudo cp /usr/share/doc/openvpn/examples/sample-scripts/bridge-stop /bin
 sudo chmod 755 /bin/bridge-stopifco
 ```
 
-## Server Network Config
+## Server Network / Client Config
 
 Now continue the previous tutorial from step 8-10.
- **NOTE: Ignore setup 10 below the following line:**  
+
+ **NOTE: Ignore step 10 below the following line:**  
+ 
  > Mirror the cipher and auth settings that we set in the /etc/openvpn/server.conf file: 
  
 
